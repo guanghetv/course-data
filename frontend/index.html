@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Coursera</title>
+    <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="mains.css" rel="stylesheet" type="text/css">
+
+</head>
+<body>
+
+<div id = "app" class="container">
+
+<!--<router-link to="/foo">Go to Foo</router-link>-->
+    <router-view></router-view>
+</div>
+
+
+<script type="text/x-template" id="videoDetail">
+    <div>
+        <div class="container" v-if="videoData">
+            <button class="glyphicon glyphicon-chevron-left" @click="returnX()"></button>
+  <h2>{{videoData.topicName}}</h2>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>进入视频PV</th>
+        <th>进入视频UV</th>
+        <th>开始视频PV</th>
+          <th>开始视频UV</th>
+          <th>退出视频PV</th>
+          <th>退出视频UV</th>
+          <th>完成视频PV</th>
+          <th>完成视频UV</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>{{videoData.enterVideo_pv}}</td>
+            <td>{{videoData.enterVideo_uv}}</td>
+            <td>{{videoData.startVideo_pv}}</td>
+            <td>{{videoData.startVideo_uv}}</td>
+            <td>{{videoData.clickVideoExit_pv}}</td>
+            <td>{{videoData.clickVideoExit_uv}}</td>
+            <td>{{videoData.finishVideo_pv}}</td>
+            <td>{{videoData.finishVideo_uv}}</td>
+        </tr>
+    </tbody>
+  </table>
+</div>
+    </div>
+</script>
+
+
+<script type="text/x-template" id="practiceDetail">
+    <div>
+        <div class="container" v-if="practiceData">
+            <button class="glyphicon glyphicon-chevron-left" @click="returnX()"></button>
+  <h2>{{practiceData.topicName}}</h2>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>开始练习PV</th>
+        <th>开始练习UV</th>
+        <th>提交答案PV</th>
+          <th>提交答案UV</th>
+          <th>退出练习PV</th>
+          <th>退出练习UV</th>
+          <th>练习失败PV</th>
+          <th>练习失败UV</th>
+          <th>练习通过PV</th>
+          <th>练习通过UV</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>{{practiceData.startPractice_pv}}</td>
+            <td>{{practiceData.startPractice_uv}}</td>
+            <td>{{practiceData.clickProblemSubmit_pv}}</td>
+            <td>{{practiceData.clickProblemSubmit_uv}}</td>
+            <td>{{practiceData.clickProblemExit_pv}}</td>
+            <td>{{practiceData.clickProblemExit_uv}}</td>
+            <td>{{practiceData.enterPracticeFailure_pv}}</td>
+            <td>{{practiceData.enterPracticeFailure_uv}}</td>
+            <td>{{practiceData.enterTopicFinish_pv}}</td>
+            <td>{{practiceData.enterTopicFinish_uv}}</td>
+        </tr>
+    </tbody>
+  </table>
+</div>
+
+        <div class="container" v-if="practiceData">
+  <h2>每层练习情况</h2>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>层序号</th>
+        <th>正确提交PV</th>
+        <th>正确提交UV</th>
+          <th>错误提交PV</th>
+          <th>错误提交UV</th>
+          <th>PV正确率</th>
+          <th>UV正确率</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr v-for="layer in practiceData.layers">
+            <td>{{layer.layerIndex}}</td>
+            <td>{{layer.right_pv}}</td>
+            <td>{{layer.right_uv}}</td>
+            <td>{{layer.wrong_pv}}</td>
+            <td>{{layer.wrong_uv}}</td>
+            <td>{{(layer.right_pv / (layer.right_pv + layer.wrong_pv)).toFixed(2)}}</td>
+            <td>{{(layer.right_uv / (layer.right_uv + layer.wrong_uv)).toFixed(2)}}</td>
+        </tr>
+    </tbody>
+  </table>
+</div>
+    </div>
+</script>
+
+
+
+<script  type="text/x-template" id="default">
+    <div>
+    <div class="container inline-dropdown">
+        <p class="inline-dropdown">开始日期</p>
+        <input class="inline-dropdown" type="text" id="startDate" v-model="startDate">
+    </div>
+
+    <div class="container inline-dropdown">
+        <p class="inline-dropdown">结束日期</p>
+        <input class="inline-dropdown" type="text" id="endDate" v-model="endDate">
+    </div>
+
+    <div class="dropdown inline-dropdown">
+    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">{{chosenPublisher}}
+    <span class="caret"></span></button>
+    <ul class="dropdown-menu">
+        <li v-for="publisher in publishers"><a v-on:click="choosePublisher(publisher)">{{publisher}}</a></li>
+    </ul>
+  </div>
+
+    <div class="dropdown inline-dropdown" v-if="semesters.length">
+    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">{{chosenSemester}}
+    <span class="caret"></span></button>
+    <ul class="dropdown-menu">
+        <li v-for="semester in semesters"><a v-on:click="chooseSemester(semester)">{{semester}}</a></li>
+    </ul>
+  </div>
+
+        <div class="dropdown inline-dropdown" v-if="chapters.length">
+    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">{{chosenChapter}}
+    <span class="caret"></span></button>
+    <ul class="dropdown-menu">
+        <li v-for="chapter in chapters"><a v-on:click="chooseChapter(chapter)">{{chapter.chapterName}}</a></li>
+    </ul>
+  </div>
+
+    <div class="container" v-if="topicData">
+  <h2>{{chosenChapter.chapterName}}</h2>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>知识点名称</th>
+          <th>知识点类型</th>
+          <th>付费状况</th>
+        <th>进入知识点PV</th>
+        <th>进入知识点UV</th>
+          <th>观看视频PV</th>
+          <th>观看视频UV</th>
+          <th>做练习PV</th>
+          <th>做练习UV</th>
+          <th>操作</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr v-for="topic in topicData">
+            <td>{{topic.topicName}}</td>
+            <td>{{topic.topicType}}</td>
+            <td>{{topic.topicPayable}}</td>
+            <td>{{topic.startTopic.pv}}</td>
+            <td>{{topic.startTopic.uv}}</td>
+            <td>{{topic.startVideo.pv}}</td>
+            <td>{{topic.startVideo.uv}}</td>
+            <td>{{topic.startPractice.pv}}</td>
+            <td>{{topic.startPractice.uv}}</td>
+            <td>
+                <button type="button" v-bind:class="[topic.startVideo.pv == 0 ? 'disabled' :'' , 'btn', 'btn-primary' ]" v-on:click="clickTopic('video', topic.topicId)">视频数据</button>
+                <button type="button" v-bind:class="[topic.startPractice.pv == 0 ? 'disabled' :'' , 'btn', 'btn-primary' ]" v-on:click="clickTopic('practice', topic.topicId)">练习数据</button>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+</div>
+        </div>
+</script>
+
+<script src="node_modules/jquery/dist/jquery.min.js"></script>
+<!--<script src="require.js"></script>-->
+<script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="node_modules/vue/dist/vue.js"></script>
+<script src="node_modules/vue-resource/dist/vue-resource.min.js"></script>
+<script src="node_modules/vue-router/dist/vue-router.min.js"></script>
+<script src="node_modules/vuetable/dist/vue-table.min.js"></script>
+<script src="node_modules/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+
+<!--<script src="node_modules/vuejs-datepicker/build/prod.js"></script>-->
+<!--<script src="datepicker.js"></script>-->
+<script src="main.js"></script>
+
+</body>
+</html>
