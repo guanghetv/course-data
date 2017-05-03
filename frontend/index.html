@@ -186,8 +186,10 @@
             <td>{{topic.startPractice.pv}}</td>
             <td>{{topic.startPractice.uv}}</td>
             <td>
-                <button type="button" v-bind:class="[topic.startVideo.pv == 0 ? 'disabled' :'' , 'btn', 'btn-primary' ]" v-on:click="clickTopic('video', topic.topicId)">视频数据</button>
-                <button type="button" v-bind:class="[topic.startPractice.pv == 0 ? 'disabled' :'' , 'btn', 'btn-primary' ]" v-on:click="clickTopic('practice', topic.topicId)">练习数据</button>
+                <button type="button" v-if="topic.startVideo.pv > 0" class="btn btn-primary" v-on:click="clickTopic('video', topic.topicId)">视频数据</button>
+                <button type="button" v-if="topic.startVideo.pv == 0" class="btn disabled">视频数据</button>
+                <button type="button" v-if="topic.startPractice.pv > 0" class="btn btn-primary" v-on:click="clickTopic('practice', topic.topicId)">习题数据</button>
+                <button type="button" v-if="topic.startPractice.pv == 0" class="btn disabled">习题数据</button>
             </td>
         </tr>
     </tbody>
